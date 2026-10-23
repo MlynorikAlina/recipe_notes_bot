@@ -1,8 +1,8 @@
 use tokio;
 
-use teloxide::{Bot, dispatching::{Dispatcher, HandlerExt, UpdateFilterExt, dialogue::InMemStorage}, dptree, requests::{Requester, ResponseResult}, types::{Message, Update}};
+use teloxide::{Bot, dispatching::{Dispatcher, HandlerExt, UpdateFilterExt, dialogue::InMemStorage}, dptree, requests::{Requester, ResponseResult}, types::{CallbackQuery, Message, Update}};
 
-use crate::commands::{State, Commands, GetCommands};
+use crate::commands::{State};
 
 mod commands;
 
@@ -15,14 +15,25 @@ async fn main() {
 
     let bot=Bot::from_env();
 
-    let handler = Update::filter_message()
+    let mess_handler = Update::filter_message()
         .enter_dialogue::<Message, InMemStorage<State>,State>()
         .branch(dptree::case![State::Start].endpoint(commands::start))
-        .branch(dptree::case![State::Command].filter_command::<Commands>()
-                        .branch(dptree::case![Commands::SaveRecipe].endpoint(commands::save))
-                        .branch(dptree::case![Commands::GetRecipe].endpoint(commands::get))
-        )
         .endpoint(commands::unknown)
+        // .branch(dptree::case![State::Command].filter_command::<Commands>()
+        //                 .branch(dptree::case![Commands::SaveRecipe].endpoint(commands::save))
+        //                 .branch(dptree::case![Commands::GetRecipe].endpoint(commands::get))
+        // )
+    ;
+    let callback_handler = Update::filter_callback_query()
+        .enter_dialogue::<CallbackQuery, InMemStorage<State>,State>()
+        .branch(dptree::case![State::Start].endpoint(commands::start_callback))
+        .branch(dptree::case![State::Get].endpoint(commands::get_callback))
+        .branch(dptree::case![State::Save].endpoint(commands::save_callback))
+    ;
+
+    let handler = dptree::entry()
+        .branch(mess_handler)
+        .branch(callback_handler)
     ;
 
     Dispatcher::builder(bot, handler)
