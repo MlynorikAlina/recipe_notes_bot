@@ -5,6 +5,7 @@ use teloxide::{Bot, dispatching::{Dispatcher, HandlerExt, UpdateFilterExt, dialo
 use crate::commands::{State};
 
 mod commands;
+mod storage;
 
 #[tokio::main]
 async fn main() {
