@@ -1,7 +1,4 @@
-use std::str::FromStr;
-
-use sea_orm::entity::prelude::*;
-use teloxide::types::User;
+use sea_orm::{ActiveValue::Set, entity::prelude::*};
 
 
 //user model
@@ -10,7 +7,8 @@ use teloxide::types::User;
 #[sea_orm(table_name ="users")]
 pub struct Model{
     #[sea_orm(primary_key)]
-    id: u64,
+    id: i64,
+    #[sea_orm(unique)]
     tg_user_id: i64,
     tg_chat_id: i64,
     name: String,
@@ -22,10 +20,20 @@ pub struct Model{
     folders: HasMany<super::folder::Entity>
 }
 
-impl Model {
-   pub fn new(tg_user_id: i64, tg_chat_id: i64, name: &str) -> Self{    
-        Model {tg_user_id, tg_chat_id, name: name.to_string()..Default::default() }
-   }
+impl ActiveModel {
+    pub fn new(
+        tg_user_id: i64,
+        tg_chat_id: i64,
+        name: &str
+    )->Self{
+        ActiveModel { 
+            tg_user_id: Set(tg_user_id), 
+            tg_chat_id: Set(tg_chat_id),
+            name: Set(name.to_owned()), 
+            ..Default::default() 
+        }
+    }
+    
 }
 
 impl ActiveModelBehavior for ActiveModel{

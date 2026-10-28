@@ -2298,6 +2298,7 @@ dependencies = [
  "log",
  "pretty_env_logger",
  "sea-orm",
+ "static_assertions",
  "teloxide",
  "tokio",
 ]

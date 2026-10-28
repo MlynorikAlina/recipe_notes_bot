@@ -1,9 +1,8 @@
 use std::error::Error;
+use sea_orm::ActiveValue::Set;
 
-use sea_orm::{ConnectionTrait, DatabaseBackend, DatabaseConnection, EntityTrait, Schema, Statement, StatementBuilder, entity, sea_query::Table};
-use teloxide::types::User;
-
-use crate::storage::models::UserModel;
+use sea_orm::{ActiveModelBehavior, IntoActiveModel};
+use sea_orm::{ActiveModelTrait, ConnectionTrait, DatabaseBackend, DatabaseConnection, EntityTrait, Schema, Statement, StatementBuilder, entity, sea_query::Table};
 
 mod models;
 
@@ -34,12 +33,12 @@ impl DBManager {
         Ok(())
     }
 
-    pub async fn add_user(
-        tg_user_id: i64,
-        tg_chat_id: i64,
-        name: String
-    )->Result<(), sea_orm::error::DbErr>{
-        let user = models::User::new()
+    pub async fn insert_data<A>(&self, data: A)->Result<(), sea_orm::error::DbErr>
+    where
+        A: models::ActiveModelData + ActiveModelTrait + ActiveModelBehavior + Send + Sync,
+        <<A as sea_orm::ActiveModelTrait>::Entity as sea_orm::EntityTrait>::Model: IntoActiveModel<A>
+    {
+        data.insert(&self.db).await?;
         Ok(())
     }
 
@@ -53,4 +52,16 @@ impl DBManager {
         Ok(())
     }
     
+}
+
+#[cfg(test)]
+mod test{
+    use super::*;
+
+    #[test]
+    fn test_insert_data(){
+        let user = models::UserActiveModel::new(23, 33, "Antony");
+        // insert_data(user);
+        
+    }
 }

@@ -1,4 +1,4 @@
-use sea_orm::entity::prelude::*;
+use sea_orm::{ActiveValue::Set, entity::prelude::*};
 
 
 #[sea_orm::model]
@@ -8,7 +8,7 @@ pub struct Model{
     #[sea_orm(primary_key)]
     id:u64,
     parent_id: Option<u64>,
-    user_id: u64,
+    user_id: i64,
     name: String,
 
     #[sea_orm(self_ref, from = "parent_id", to = "id", relation_enum="Parent", relation_reverse="Children")]
@@ -20,9 +20,26 @@ pub struct Model{
     #[sea_orm(has_many)]
     recipes: HasMany<super::recipe::Entity>,
 
-    #[sea_orm(belongs_to, from="user_id", to="id", on_delete="Cascade")]
+    #[sea_orm(belongs_to, from="user_id", to="tg_user_id", on_delete="Cascade")]
     user: BelongsTo<super::user::Entity>
 }
+
+impl ActiveModel {
+    pub fn new(
+        tg_user_id: i64,
+        parent_folder_id: Option<u64>,
+        folder_name: &str
+    )->Self{
+        ActiveModel { 
+            user_id: Set(tg_user_id),
+            parent_id: Set(parent_folder_id),
+            name: Set(folder_name.to_owned()),
+            ..Default::default()
+        }
+    }
+    
+}
+
 
 impl ActiveModelBehavior for ActiveModel {
     
