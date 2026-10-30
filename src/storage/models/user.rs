@@ -7,7 +7,7 @@ use sea_orm::{ActiveValue::Set, entity::prelude::*};
 #[sea_orm(table_name ="users")]
 pub struct Model{
     #[sea_orm(primary_key)]
-    id: i64,
+    id: u64,
     #[sea_orm(unique)]
     tg_user_id: i64,
     tg_chat_id: i64,

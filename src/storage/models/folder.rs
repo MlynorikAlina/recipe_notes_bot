@@ -37,6 +37,16 @@ impl ActiveModel {
             ..Default::default()
         }
     }
+
+    pub fn rename(&mut self, new_name: &str) -> &Self{
+        self.name = Set(new_name.to_owned());
+        self
+    }
+
+    pub fn move_to_dir(&mut self, parent: Option<u64>) -> &Self{
+        self.parent_id = Set(parent);
+        self
+    }
     
 }
 

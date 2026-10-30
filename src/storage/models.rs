@@ -8,19 +8,19 @@ pub use user::{ActiveModel as UserActiveModel, Model as UserModel, Entity as Use
 pub use recipe::{ActiveModel as RecipeActiveModel, Model as RecipeModel, Entity as Recipe};
 pub use folder::{ActiveModel as FolderActiveModel, Model as FolderModel, Entity as Folder};
 
-pub trait ActiveModelData {
+pub trait ModelData {
     
 }
 
-impl ActiveModelData for UserActiveModel {
+impl ModelData for UserModel {
     
 }
 
-impl ActiveModelData for FolderActiveModel {
+impl ModelData for FolderModel {
     
 }
 
-impl ActiveModelData for RecipeActiveModel {
+impl ModelData for RecipeModel {
     
 }
 
