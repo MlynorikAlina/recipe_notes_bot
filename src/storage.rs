@@ -7,7 +7,7 @@ use sea_orm::{ActiveModelTrait, ConnectionTrait, DatabaseBackend, DatabaseConnec
 
 use crate::storage::models::ModelData;
 
-mod models;
+pub mod models;
 
 
 /// Specialized struct for managing db.
