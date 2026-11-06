@@ -1,7 +1,6 @@
 use std::fs::File;
 use serde::{Deserialize, Serialize};
 
-
 #[derive(Debug, Deserialize, Serialize)]
 pub struct FSObject{
     pub id:String,
@@ -17,12 +16,12 @@ pub enum FSObjectType{
 
 impl FSObject{
     pub fn new(id:u64, parent_id: Option<u64>, name: &str, obj_type: FSObjectType)-> Self{
-        let (obj_type, id) = match obj_type {
-            FSObjectType::Dir => ("dir".to_owned(), format!("{id}-d").to_owned()),
-            FSObjectType::File => ("file".to_owned(), format!("{id}-f").to_owned()),            
+        let obj_type= match obj_type {
+            FSObjectType::Dir => "dir".to_owned(),
+            FSObjectType::File => "file".to_owned(),            
         }; 
         FSObject{
-            id,
+            id: id.to_string(),
             parent_id,
             obj_type,
             name: name.to_owned(),
