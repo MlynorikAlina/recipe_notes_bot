@@ -1,5 +1,5 @@
-use rocket::launch;
-use rocket_cors::{AllowedOrigins, CorsOptions};
+use rocket::{http::Method, launch};
+use rocket_cors::{AllowedHeaders, AllowedOrigins, CorsOptions};
 use teloxide::{Bot, dispatching::{Dispatcher, HandlerExt, UpdateFilterExt, dialogue::InMemStorage}, dptree, requests::{Requester, ResponseResult}, types::{CallbackQuery, Message, Update}};
 
 mod commands;
@@ -44,15 +44,14 @@ pub async fn run_bot(){
 
 pub async fn run_server() -> Result<(), rocket::Error> {
     let cors = CorsOptions::default()
-        .allowed_origins(AllowedOrigins::some_exact(&[
-            "http://localhost:5173".to_string(), // URL вашего фронтенда
-        ]))
+        .allowed_origins(AllowedOrigins::all()) // Разрешить любые сайты
+        .allowed_headers(AllowedHeaders::all()) // Разрешить любые заголовки (Content-Type, Authorization
         .allow_credentials(true)
         .to_cors()
         .expect("Ошибка при создании CORS Fairing");
 
     let rocket = rocket::build().mount("/", 
-        rocket::routes![server::ping, server::get_fs]).attach(cors);
+        rocket::routes![server::ping, server::get_fs, server::post_folder, server::post_file]).attach(cors);
     rocket.launch().await?;
     Ok(())
 }

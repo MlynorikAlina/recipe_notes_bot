@@ -9,6 +9,21 @@ pub struct FSObject{
     pub obj_type: String
 }
 
+#[derive(Debug, Deserialize, Serialize)]
+pub struct FSFolder{
+    pub user_id: String,
+    pub parent_id: Option<u64>,
+    pub name: String
+}
+
+#[derive(Debug, Deserialize, Serialize)]
+pub struct FSFile{
+    pub parent_id: Option<u64>,
+    pub name: String,
+    pub ingridients: String,
+    pub description: String
+}
+
 pub enum FSObjectType{
     Dir,
     File
